@@ -1,13 +1,12 @@
-import User, { UserProps } from "./user";
+import User from "./user";
 
 describe("User", () => {
   let sut: User;
-  const props: UserProps = {
+  const props = {
     name: "Example User",
     email: "example@email.com",
     password: "examplePassword",
     updatedAt: new Date(),
-    createdAt: new Date(),
   };
 
   beforeEach(() => {
@@ -21,6 +20,22 @@ describe("User", () => {
     expect(sut.password).toBe(props.password);
     expect(sut.createdAt).toBeInstanceOf(Date);
     expect(sut.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it("should be able to create a new user with custom id", () => {
+    const id = "customId";
+
+    sut = new User(props, id);
+
+    expect(sut.id).toBe(id);
+  });
+
+  it("should be able to create a new user with createdAt", () => {
+    const createdAt = new Date();
+
+    sut = new User({ ...props, createdAt });
+
+    expect(sut.createdAt).toBe(createdAt);
   });
 
   it("should change name correctly", () => {

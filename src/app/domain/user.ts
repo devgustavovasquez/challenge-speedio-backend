@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { Replace } from "../../../utils";
 
 export type UserProps = {
   name: string;
@@ -12,8 +13,11 @@ export default class User {
   private _id: string;
   private props: UserProps;
 
-  constructor(props: UserProps, id?: string) {
-    this.props = props;
+  constructor(props: Replace<UserProps, { createdAt?: Date }>, id?: string) {
+    this.props = {
+      ...props,
+      createdAt: props.createdAt || new Date(),
+    };
     this._id = id || randomUUID();
   }
 
