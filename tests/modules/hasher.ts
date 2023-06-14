@@ -1,13 +1,15 @@
 import Hasher from "../../src/infra/modules/hasher";
 
-class HasherMock implements Hasher {
+export default class HasherMock implements Hasher {
   async hash(_plaintext: string): Promise<string> {
     return Promise.resolve("hashedValue");
   }
 
-  async compare(_plaintext: string, _digest: string): Promise<boolean> {
-    return Promise.resolve(true);
+  async compare(plaintext: string, digest: string): Promise<boolean> {
+    if (digest === "hashedPassword") {
+      return Promise.resolve(plaintext === "correctPassword");
+    } else {
+      return Promise.resolve(false);
+    }
   }
 }
-
-export default HasherMock;
