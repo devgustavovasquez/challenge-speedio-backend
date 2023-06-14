@@ -1,0 +1,44 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        String   @id @default(uuid()) @db.Uuid
+    name      String
+    email     String   @unique
+    password  String
+    updatedAt DateTime
+    createdAt DateTime
+    URL       URL[]
+
+    @@map("users")
+}
+
+model URL {
+    id        String   @id @default(uuid()) @db.Uuid
+    title     String
+    origin    String
+    short     String   @unique
+    updatedAt DateTime
+    createdAt DateTime
+    userId    String   @db.Uuid
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("urls")
+}
+
+model URLHistory {
+    id              String   @id @default(uuid()) @db.Uuid
+    title           String
+    url             String   @unique
+    count           Int
+    lastAccessedAt  DateTime
+    firstAccessedAt DateTime
+
+    @@map("url_histories")
+}
