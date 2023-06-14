@@ -4,11 +4,15 @@ import UsersRepository from "../../src/app/repositories/users-repository";
 export class InMemoryUsersRepository implements UsersRepository {
   public users: User[] = [];
 
-  async save(User: User) {
-    this.users.push(User);
+  async save(user: User) {
+    this.users.push(user);
+  }
+
+  async findById(id: string): Promise<User | undefined> {
+    return this.users.find((user) => user.id === id);
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.users.find((User) => User.email === email);
+    return this.users.find((user) => user.email === email);
   }
 }
