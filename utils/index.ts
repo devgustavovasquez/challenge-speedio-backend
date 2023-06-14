@@ -19,3 +19,9 @@ export function incrementShort(value: string): string {
 
   return number + letter;
 }
+
+export function getUrlRoot(url: string): string {
+  const parsedUrl = new URL(url);
+  const rootUrl = parsedUrl.protocol + "//" + parsedUrl.hostname;
+  return rootUrl;
+}

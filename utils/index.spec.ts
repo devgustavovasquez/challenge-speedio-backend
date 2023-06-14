@@ -1,4 +1,4 @@
-import { incrementShort } from ".";
+import { incrementShort, getUrlRoot } from ".";
 
 describe("incrementShort", () => {
   it('should increment the value when letter is not "z"', () => {
@@ -17,5 +17,39 @@ describe("incrementShort", () => {
     expect(() => incrementShort("123")).toThrow();
     expect(() => incrementShort("abc")).toThrow();
     expect(() => incrementShort("")).toThrow();
+  });
+});
+
+describe("getUrlRoot", () => {
+  it("returns the root URL for a valid URL", () => {
+    const url = "https://www.example.com/path/to/page?query=string";
+
+    const rootUrl = getUrlRoot(url);
+
+    expect(rootUrl).toBe("https://www.example.com");
+  });
+
+  it("returns the root URL for a URL without path or query", () => {
+    const url = "https://www.example.com";
+
+    const rootUrl = getUrlRoot(url);
+
+    expect(rootUrl).toBe("https://www.example.com");
+  });
+
+  it("returns the root URL for a URL with subdomains", () => {
+    const url = "https://subdomain.example.com/path/to/page";
+
+    const rootUrl = getUrlRoot(url);
+
+    expect(rootUrl).toBe("https://subdomain.example.com");
+  });
+
+  it("returns the root URL for a URL with trailing slash", () => {
+    const url = "https://www.example.com/";
+
+    const rootUrl = getUrlRoot(url);
+
+    expect(rootUrl).toBe("https://www.example.com");
   });
 });
