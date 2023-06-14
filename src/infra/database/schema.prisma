@@ -26,8 +26,8 @@ model URL {
     short     String   @unique
     updatedAt DateTime
     createdAt DateTime
-    userId    String   @db.Uuid
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String?  @db.Uuid
+    user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("urls")
 }
