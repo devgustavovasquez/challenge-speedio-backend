@@ -2,7 +2,7 @@ import { Config } from "jest";
 
 const config: Config = {
   rootDir: ".",
-  collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
+  collectCoverageFrom: ["<rootDir>/src/**/*.ts", "<rootDir>/utils/**/*.ts"],
   coveragePathIgnorePatterns: ["<rootDir>/dist/"],
   coverageDirectory: "coverage",
   transform: {
