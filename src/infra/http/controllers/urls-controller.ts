@@ -10,6 +10,7 @@ import Auth from "../../modules/auth";
 import RedirectURLUseCase from "../../../app/use-cases/redirect-url-use-case";
 import URLsHistoryRepository from "../../../app/repositories/urls-history-repository";
 import PrismaURLsHistoryRepository from "../../database/repositories/prisma-urls-history-repository";
+import { URLViewModel } from "../view-models/urls-view-model";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -40,7 +41,7 @@ export class URLsController {
 
           const { url } = await useCase.execute(request.body);
 
-          return response.status(201).json(url);
+          return response.status(201).send(URLViewModel.toHTTP(url));
         } catch (error) {
           next(error);
         }
@@ -60,7 +61,7 @@ export class URLsController {
 
           const { redirectURL } = await useCase.execute({ short });
 
-          return response.status(200).json({ redirectURL });
+          return response.status(200).send({ redirectURL });
         } catch (error) {
           next(error);
         }

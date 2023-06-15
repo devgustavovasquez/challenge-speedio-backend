@@ -8,6 +8,7 @@ import CreateUserUseCase from "../../../app/use-cases/create-user-use-case";
 import Hasher from "../../modules/hasher";
 import LoginUserUseCase from "../../../app/use-cases/login-user-use-case";
 import Auth from "../../modules/auth";
+import { UserViewModel } from "../view-models/users-view-model";
 
 export class UsersController {
   private readonly usersRepository: UsersRepository;
@@ -33,7 +34,7 @@ export class UsersController {
           );
           const { user } = await useCase.execute(request.body);
 
-          return response.status(201).json(user);
+          return response.status(201).send(UserViewModel.toHTTP(user));
         } catch (error) {
           next(error);
         }
@@ -51,7 +52,7 @@ export class UsersController {
           );
           const { type, token } = await useCase.execute(request.body);
 
-          return response.status(200).json({ type, token });
+          return response.status(200).send({ type, token });
         } catch (error) {
           next(error);
         }
