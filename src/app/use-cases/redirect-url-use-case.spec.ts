@@ -1,6 +1,7 @@
 import { makeURL } from "../../../tests/factories/url-factory";
 import { InMemoryURLsHistoryRepository } from "../../../tests/repositories/urls-history-repository";
 import { InMemoryURLsRepository } from "../../../tests/repositories/urls-repository";
+import { NotFoundError } from "../../infra/http/errors/not-found";
 import RedirectURLUseCase from "./redirect-url-use-case";
 
 describe("RedirectURL", () => {
@@ -30,7 +31,7 @@ describe("RedirectURL", () => {
       short: "1f",
     };
 
-    await expect(sut.execute(request)).rejects.toThrow();
+    await expect(sut.execute(request)).rejects.toThrow(NotFoundError);
   });
 
   it("should create a new URLHistory if it does not exist", async () => {

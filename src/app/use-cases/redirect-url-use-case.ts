@@ -2,6 +2,7 @@ import { getUrlRoot } from "../../../utils";
 import URLHistory from "../domain/url-history";
 import URLsRepository from "../repositories/urls-repository";
 import URLsHistoryRepository from "../repositories/urls-history-repository";
+import { NotFoundError } from "../../infra/http/errors/not-found";
 
 type RedirectURLRequest = {
   short: string;
@@ -23,7 +24,7 @@ export default class RedirectURLUseCase {
     const url = await this.URLsRepository.findByShort(short);
 
     if (!url) {
-      throw new Error("URL not found");
+      throw new NotFoundError(`URL with short ${short} not found`);
     }
 
     const urlRoot = getUrlRoot(url.origin);

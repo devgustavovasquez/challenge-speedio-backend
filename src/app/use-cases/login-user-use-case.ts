@@ -1,3 +1,4 @@
+import { NotFoundError } from "../../infra/http/errors/not-found";
 import Auth from "../../infra/modules/auth";
 import Hasher from "../../infra/modules/hasher";
 import UsersRepository from "../repositories/users-repository";
@@ -25,7 +26,7 @@ export default class LoginUserUseCase {
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError(`User with email ${email} not found`);
     }
 
     const isPasswordMatch = await this.hasher.compare(password, user.password);

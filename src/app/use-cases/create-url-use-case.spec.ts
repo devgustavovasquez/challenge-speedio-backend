@@ -3,6 +3,7 @@ import { makeUser } from "../../../tests/factories/user-factory";
 import MockAuth from "../../../tests/modules/auth";
 import { InMemoryURLsRepository } from "../../../tests/repositories/urls-repository";
 import { InMemoryUsersRepository } from "../../../tests/repositories/users-repository";
+import { BadRequestError } from "../../infra/http/errors/bad-request";
 import URL from "../domain/url";
 import CreateURLUseCase from "./create-url-use-case";
 
@@ -73,7 +74,7 @@ describe("CreateURL", () => {
       token: "invalid-token",
     };
 
-    await expect(sut.execute(request)).rejects.toThrow();
+    await expect(sut.execute(request)).rejects.toThrow(BadRequestError);
   });
 
   it("should throw if token is not found, when userId is provided", async () => {
@@ -86,7 +87,7 @@ describe("CreateURL", () => {
       userId: user.id,
     };
 
-    await expect(sut.execute(request)).rejects.toThrow();
+    await expect(sut.execute(request)).rejects.toThrow(BadRequestError);
   });
 
   it("should throw if user is not authenticated", async () => {

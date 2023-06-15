@@ -1,4 +1,5 @@
 import { incrementShort } from "../../../utils";
+import { BadRequestError } from "../../infra/http/errors/bad-request";
 import Auth from "../../infra/modules/auth";
 import URL from "../domain/url";
 import URLsRepository from "../repositories/urls-repository";
@@ -27,13 +28,13 @@ export default class CreateURLUseCase {
 
     if (userId) {
       if (!token) {
-        throw new Error("Token not found");
+        throw new BadRequestError("Token not found");
       }
 
       const user = await this.usersRepository.findById(userId);
 
       if (!user) {
-        throw new Error("User not found");
+        throw new BadRequestError("User not found");
       }
 
       const isValidToken = this.auth.verifyToken(token);

@@ -3,6 +3,7 @@ import { InMemoryUsersRepository } from "../../../tests/repositories/users-repos
 import LoginUserUseCase from "./login-user-use-case";
 import HasherMock from "../../../tests/modules/hasher";
 import MockAuth from "../../../tests/modules/auth";
+import { NotFoundError } from "../../infra/http/errors/not-found";
 
 describe("LoginUser", () => {
   let sut: LoginUserUseCase;
@@ -33,7 +34,7 @@ describe("LoginUser", () => {
       password: "123456",
     };
 
-    await expect(sut.execute(request)).rejects.toThrow();
+    await expect(sut.execute(request)).rejects.toThrow(NotFoundError);
   });
 
   it("should throw an error if the password is incorrect", async () => {

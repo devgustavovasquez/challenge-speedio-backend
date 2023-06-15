@@ -1,8 +1,8 @@
 import { HTTPError } from "../middlewares/error-middleware";
 
-export class BadRequestError extends HTTPError {
+export class NotFoundError extends HTTPError {
   constructor(message: string, object?: object) {
-    super(400, message, object);
-    this.name = "BadRequest";
+    super(404, message, object);
+    this.name = "NotFound";
   }
 }
