@@ -6,6 +6,8 @@ import PrismaUsersRepository from "../../database/repositories/prisma-users-repo
 
 import CreateUserUseCase from "../../../app/use-cases/create-user-use-case";
 import Hasher from "../../modules/hasher";
+import LoginUserUseCase from "../../../app/use-cases/login-user-use-case";
+import Auth from "../../modules/auth";
 
 export class UsersController {
   private readonly usersRepository: UsersRepository;
@@ -13,6 +15,7 @@ export class UsersController {
   constructor(
     private application: Application,
     private hasher: Hasher,
+    private auth: Auth,
     database: PrismaClient,
   ) {
     this.registerRoutes();
@@ -31,6 +34,24 @@ export class UsersController {
           const { user } = await useCase.execute(request.body);
 
           return response.status(201).json(user);
+        } catch (error) {
+          next(error);
+        }
+      },
+    );
+
+    this.application.post(
+      "/users/login",
+      async (request: Request, response: Response, next: NextFunction) => {
+        try {
+          const useCase = new LoginUserUseCase(
+            this.usersRepository,
+            this.hasher,
+            this.auth,
+          );
+          const { type, token } = await useCase.execute(request.body);
+
+          return response.status(200).json({ type, token });
         } catch (error) {
           next(error);
         }
