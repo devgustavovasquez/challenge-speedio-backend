@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/index.ts",
     "test": "jest --passWithNoTests --runInBand --no-cache",
     "test:unit": "pnpm test -- --verbose --watch -c jest-unit.config.ts",
-    "test:e2e": "pnpm test -- --verbose --watch -c jest-e2e.config.ts",
+    "test:e2e": "pnpm test -- --verbose -c jest-e2e.config.ts",
     "test:staged": "pnpm test -- --bail -o",
     "test:cov": "pnpm test -- --coverage",
     "lint": "eslint src --ext .ts --fix",

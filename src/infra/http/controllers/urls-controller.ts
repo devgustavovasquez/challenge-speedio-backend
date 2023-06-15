@@ -17,9 +17,9 @@ export class URLsController {
   private readonly urlsHistoryRepository: URLsHistoryRepository;
 
   constructor(
-    private application: Application,
-    private auth: Auth,
-    database: PrismaClient,
+    private readonly application: Application,
+    private readonly auth: Auth,
+    private readonly database: PrismaClient,
   ) {
     this.registerRoutes();
     this.urlsRepositoy = new PrismaUrlsRepository(database);

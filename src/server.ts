@@ -1,23 +1,59 @@
-import "dotenv/config";
-import express from "express";
-import { UsersController } from "./infra/http/controllers/users-controller";
-import Prisma from "./infra/database";
-import { Bcrypt } from "./infra/modules/hasher";
-import { Jwt } from "./infra/modules/auth";
+import express, { Application } from "express";
+import { Server as HttpServer } from "http";
+
 import { URLsController } from "./infra/http/controllers/urls-controller";
+import { UsersController } from "./infra/http/controllers/users-controller";
 
-const app = express();
-const database = new Prisma();
-const auth = new Jwt();
-const hasher = new Bcrypt();
+import Prisma from "./infra/database";
+import Hasher, { Bcrypt } from "./infra/modules/hasher";
+import Auth, { Jwt } from "./infra/modules/auth";
 
-app.use(express.json());
+export default class Server extends HttpServer {
+  private app: Application;
+  private database: Prisma;
+  private hasher: Hasher;
+  private auth: Auth;
+  private serverInstance: HttpServer | null;
 
-new UsersController(app, hasher, auth, database);
-new URLsController(app, auth, database);
+  constructor(private port: number | string, private log = true) {
+    super();
+    this.app = express();
+    this.database = new Prisma();
+    this.hasher = new Bcrypt();
+    this.auth = new Jwt();
+    this.serverInstance = null;
+  }
 
-const port = process.env.PORT || 3000;
+  async init(): Promise<void> {
+    this.app.use(express.json());
+    await this.database.$connect();
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+    new UsersController(this.app, this.hasher, this.auth, this.database);
+    new URLsController(this.app, this.auth, this.database);
+
+    this.serverInstance = this.app.listen(this.port, () => {
+      if (this.log) {
+        console.log(`[SERVER] running at http://localhost:${this.port}`);
+      }
+    });
+  }
+
+  getServerInstance(): HttpServer {
+    if (!this.serverInstance) {
+      throw new Error("Server is not running");
+    }
+
+    return this.serverInstance;
+  }
+
+  async stop(): Promise<void> {
+    if (this.serverInstance) {
+      await this.database.$disconnect();
+      this.serverInstance.close(() => {
+        if (this.log) {
+          console.log("[SERVER] closed");
+        }
+      });
+    }
+  }
+}

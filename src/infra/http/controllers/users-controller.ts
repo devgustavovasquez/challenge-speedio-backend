@@ -13,10 +13,10 @@ export class UsersController {
   private readonly usersRepository: UsersRepository;
 
   constructor(
-    private application: Application,
-    private hasher: Hasher,
-    private auth: Auth,
-    database: PrismaClient,
+    private readonly application: Application,
+    private readonly hasher: Hasher,
+    private readonly auth: Auth,
+    private readonly database: PrismaClient,
   ) {
     this.registerRoutes();
     this.usersRepository = new PrismaUsersRepository(database);
