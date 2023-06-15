@@ -1,4 +1,5 @@
 import { NotFoundError } from "../../infra/http/errors/not-found";
+import { UnauthorizedError } from "../../infra/http/errors/unauthorized";
 import Auth from "../../infra/modules/auth";
 import Hasher from "../../infra/modules/hasher";
 import UsersRepository from "../repositories/users-repository";
@@ -32,7 +33,7 @@ export default class LoginUserUseCase {
     const isPasswordMatch = await this.hasher.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      throw new Error("Incorrect password");
+      throw new UnauthorizedError("Invalid password");
     }
 
     const token = this.auth.generateToken(

@@ -40,7 +40,7 @@ export default class CreateURLUseCase {
       const isValidToken = this.auth.verifyToken(token);
 
       if (!isValidToken) {
-        throw new Error("Invalid token");
+        throw new BadRequestError("Invalid token");
       }
     }
 
