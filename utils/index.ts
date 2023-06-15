@@ -22,6 +22,11 @@ export function incrementShort(value: string): string {
 
 export function getUrlRoot(url: string): string {
   const parsedUrl = new URL(url);
-  const rootUrl = parsedUrl.protocol + "//" + parsedUrl.hostname;
-  return rootUrl;
+  let rootUrl = parsedUrl.hostname;
+
+  if (rootUrl.startsWith("www.")) {
+    rootUrl = rootUrl.slice(4);
+  }
+
+  return parsedUrl.protocol + "//" + rootUrl;
 }

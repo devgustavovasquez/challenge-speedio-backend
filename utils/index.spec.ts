@@ -26,7 +26,7 @@ describe("getUrlRoot", () => {
 
     const rootUrl = getUrlRoot(url);
 
-    expect(rootUrl).toBe("https://www.example.com");
+    expect(rootUrl).toBe("https://example.com");
   });
 
   it("returns the root URL for a URL without path or query", () => {
@@ -34,7 +34,7 @@ describe("getUrlRoot", () => {
 
     const rootUrl = getUrlRoot(url);
 
-    expect(rootUrl).toBe("https://www.example.com");
+    expect(rootUrl).toBe("https://example.com");
   });
 
   it("returns the root URL for a URL with subdomains", () => {
@@ -46,10 +46,10 @@ describe("getUrlRoot", () => {
   });
 
   it("returns the root URL for a URL with trailing slash", () => {
-    const url = "https://www.example.com/";
+    const url = "https://example.com/";
 
     const rootUrl = getUrlRoot(url);
 
-    expect(rootUrl).toBe("https://www.example.com");
+    expect(rootUrl).toBe("https://example.com");
   });
 });
