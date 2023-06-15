@@ -37,11 +37,13 @@ export default class RedirectURLUseCase {
         count: 0,
         lastAccessedAt: new Date(),
       });
+
+      await this.urlsHistoryRepository.save(urlHistory);
     }
 
     urlHistory.markAsAccessed();
 
-    await this.urlsHistoryRepository.save(urlHistory);
+    await this.urlsHistoryRepository.update(urlHistory);
 
     return { redirectURL: url.origin };
   }

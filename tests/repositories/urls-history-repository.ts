@@ -8,6 +8,12 @@ export class InMemoryURLsHistoryRepository implements URLsHistoryRepository {
     this.urls.push(url);
   }
 
+  async update(url: URLHistory): Promise<void> {
+    const index = this.urls.findIndex((u) => u.url === url.url);
+
+    this.urls[index] = url;
+  }
+
   async list(options: { limit?: number }): Promise<URLHistory[]> {
     if (options.limit) {
       return this.urls.slice(0, options.limit);

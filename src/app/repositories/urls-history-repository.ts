@@ -6,6 +6,7 @@ type ListOptions = {
 
 export default interface URLsHistoryRepository {
   save(url: URLHistory): Promise<void>;
+  update(url: URLHistory): Promise<void>;
   list(options: ListOptions): Promise<URLHistory[]>;
   findByURL(url: string): Promise<URLHistory | undefined>;
 }

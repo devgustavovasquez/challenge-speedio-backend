@@ -14,6 +14,15 @@ export default class PrismaURLsHistoryRepository
     await this.prisma.uRLHistory.create({ data: urlHistory });
   }
 
+  async update(data: URLHistory): Promise<void> {
+    const urlHistory = URLsHistoryMapper.toPrisma(data);
+
+    await this.prisma.uRLHistory.update({
+      where: { url: urlHistory.url },
+      data: urlHistory,
+    });
+  }
+
   async findByURL(url: string): Promise<URLHistory | undefined> {
     const urlHistory = await this.prisma.uRLHistory.findUnique({
       where: { url },
