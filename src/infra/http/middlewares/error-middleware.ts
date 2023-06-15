@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 
 export class HTTPError extends Error {
-  constructor(public statusCode: number, message: string) {
+  constructor(
+    public statusCode: number,
+    message: string,
+    public object?: object,
+  ) {
     super(message);
     this.name = "HTTPError";
     this.statusCode = statusCode;
+    this.object = object;
   }
 }
 
@@ -17,6 +22,11 @@ export function errorMiddleware(
   if (err instanceof HTTPError) {
     if (err.statusCode >= 500) {
       console.error(err);
+    }
+    if (err.object) {
+      return res
+        .status(err.statusCode)
+        .send({ error: err.message, ...err.object });
     }
 
     return res.status(err.statusCode).send({ error: err.message });
