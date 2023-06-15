@@ -9,6 +9,8 @@ import Hasher from "../../modules/hasher";
 import LoginUserUseCase from "../../../app/use-cases/login-user-use-case";
 import Auth from "../../modules/auth";
 import { UserViewModel } from "../view-models/users-view-model";
+import { validateMiddleware } from "../middlewares/validate-middleware";
+import { z } from "zod";
 
 export class UsersController {
   private readonly usersRepository: UsersRepository;
@@ -28,11 +30,22 @@ export class UsersController {
       "/users",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
+          const schema = z.object({
+            body: z.object({
+              name: z.string().min(3).max(255),
+              email: z.string().email(),
+              password: z.string().min(6).max(255),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
+
           const useCase = new CreateUserUseCase(
             this.usersRepository,
             this.hasher,
           );
-          const { user } = await useCase.execute(request.body);
+
+          const { user } = await useCase.execute(data);
 
           return response.status(201).send(UserViewModel.toHTTP(user));
         } catch (error) {
@@ -45,12 +58,21 @@ export class UsersController {
       "/users/login",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
+          const schema = z.object({
+            body: z.object({
+              email: z.string().email(),
+              password: z.string().min(6).max(255),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
+
           const useCase = new LoginUserUseCase(
             this.usersRepository,
             this.hasher,
             this.auth,
           );
-          const { type, token } = await useCase.execute(request.body);
+          const { type, token } = await useCase.execute(data);
 
           return response.status(200).send({ type, token });
         } catch (error) {

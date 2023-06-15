@@ -11,6 +11,8 @@ import RedirectURLUseCase from "../../../app/use-cases/redirect-url-use-case";
 import URLsHistoryRepository from "../../../app/repositories/urls-history-repository";
 import PrismaURLsHistoryRepository from "../../database/repositories/prisma-urls-history-repository";
 import { URLViewModel } from "../view-models/urls-view-model";
+import { validateMiddleware } from "../middlewares/validate-middleware";
+import { z } from "zod";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -33,13 +35,24 @@ export class URLsController {
       "/urls",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
+          const schema = z.object({
+            body: z.object({
+              title: z.string().min(3).max(255),
+              origin: z.string().url(),
+              userId: z.string().uuid().optional(),
+              token: z.string().optional(),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
+
           const useCase = new CreateURLUseCase(
             this.urlsRepositoy,
             this.usersRepository,
             this.auth,
           );
 
-          const { url } = await useCase.execute(request.body);
+          const { url } = await useCase.execute(data);
 
           return response.status(201).send(URLViewModel.toHTTP(url));
         } catch (error) {
@@ -52,14 +65,20 @@ export class URLsController {
       "/:short",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
-          const { short } = request.params;
+          const schema = z.object({
+            params: z.object({
+              short: z.string().min(2),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
 
           const useCase = new RedirectURLUseCase(
             this.urlsRepositoy,
             this.urlsHistoryRepository,
           );
 
-          const { redirectURL } = await useCase.execute({ short });
+          const { redirectURL } = await useCase.execute(data);
 
           return response.status(200).send({ redirectURL });
         } catch (error) {
