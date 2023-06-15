@@ -1,5 +1,6 @@
 import { AnyZodObject, ZodError, z } from "zod";
 import { Request } from "express";
+import { BadRequestError } from "../errors/bad-request";
 
 export async function validateMiddleware<T extends AnyZodObject>(
   schema: T,
@@ -34,7 +35,18 @@ export async function validateMiddleware<T extends AnyZodObject>(
     return response;
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new Error(error.message);
+      let object = {};
+
+      error.errors.forEach((err) => {
+        object = {
+          ...object,
+          [err.path.join(".")]: err.message,
+        };
+      });
+
+      throw new BadRequestError("Validation Error", {
+        fields: object,
+      });
     }
 
     throw new Error(JSON.stringify(error));

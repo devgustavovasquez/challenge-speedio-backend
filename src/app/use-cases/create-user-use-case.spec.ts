@@ -1,5 +1,6 @@
 import HasherMock from "../../../tests/modules/hasher";
 import { InMemoryUsersRepository } from "../../../tests/repositories/users-repository";
+import { BadRequestError } from "../../infra/http/errors/bad-request";
 import User from "../domain/user";
 import CreateUserUseCase from "./create-user-use-case";
 
@@ -41,7 +42,7 @@ describe("CreateUser", () => {
       password: "654321",
     };
 
-    await expect(sut.execute(newUser)).rejects.toThrow();
+    await expect(sut.execute(newUser)).rejects.toThrow(BadRequestError);
   });
 
   it("should hash the user password", async () => {

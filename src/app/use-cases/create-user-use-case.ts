@@ -2,6 +2,7 @@ import User from "../domain/user";
 import UsersRepository from "../repositories/users-repository";
 
 import Hasher from "../../infra/modules/hasher";
+import { BadRequestError } from "../../infra/http/errors/bad-request";
 
 type CreateUserRequest = {
   name: string;
@@ -20,19 +21,18 @@ export default class CreateUserUseCase {
   ) {}
 
   async execute(request: CreateUserRequest): Promise<CreateUserResponse> {
-    const userAlreadyExists = await this.usersRepository.findByEmail(
-      request.email,
-    );
+    const { name, email, password } = request;
+    const userAlreadyExists = await this.usersRepository.findByEmail(email);
 
     if (userAlreadyExists) {
-      throw new Error("User already exists");
+      throw new BadRequestError(`User with email ${email} already exists`);
     }
 
-    const hashedPassword = await this.hasher.hash(request.password);
+    const hashedPassword = await this.hasher.hash(password);
 
     const user = new User({
-      name: request.name,
-      email: request.email,
+      name,
+      email,
       password: hashedPassword,
       updatedAt: new Date(),
     });
