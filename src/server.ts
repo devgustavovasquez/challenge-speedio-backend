@@ -7,13 +7,14 @@ import { UsersController } from "./infra/http/controllers/users-controller";
 import Prisma from "./infra/database";
 import Hasher, { Bcrypt } from "./infra/modules/hasher";
 import Auth, { Jwt } from "./infra/modules/auth";
+import { errorMiddleware } from "./infra/http/middlewares/error-middleware";
 
 export default class Server extends HttpServer {
+  private serverInstance: HttpServer | null;
   private app: Application;
   private database: Prisma;
   private hasher: Hasher;
   private auth: Auth;
-  private serverInstance: HttpServer | null;
 
   constructor(private port: number | string, private log = true) {
     super();
@@ -31,6 +32,7 @@ export default class Server extends HttpServer {
     new UsersController(this.app, this.hasher, this.auth, this.database);
     new URLsController(this.app, this.auth, this.database);
 
+    this.app.use(errorMiddleware);
     this.serverInstance = this.app.listen(this.port, () => {
       if (this.log) {
         console.log(`[SERVER] running at http://localhost:${this.port}`);
