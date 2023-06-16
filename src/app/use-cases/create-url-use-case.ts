@@ -1,5 +1,6 @@
 import { incrementShort } from "../../../utils";
 import { BadRequestError } from "../../infra/http/errors/bad-request";
+import { UnauthorizedError } from "../../infra/http/errors/unauthorized";
 import Auth from "../../infra/modules/auth";
 import URL from "../domain/url";
 import URLsRepository from "../repositories/urls-repository";
@@ -40,7 +41,7 @@ export default class CreateURLUseCase {
       const isValidToken = this.auth.verifyToken(token);
 
       if (!isValidToken) {
-        throw new BadRequestError("Invalid token");
+        throw new UnauthorizedError("Invalid token");
       }
     }
 

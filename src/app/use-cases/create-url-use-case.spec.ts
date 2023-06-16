@@ -4,6 +4,7 @@ import MockAuth from "../../../tests/modules/auth";
 import { InMemoryURLsRepository } from "../../../tests/repositories/urls-repository";
 import { InMemoryUsersRepository } from "../../../tests/repositories/users-repository";
 import { BadRequestError } from "../../infra/http/errors/bad-request";
+import { UnauthorizedError } from "../../infra/http/errors/unauthorized";
 import URL from "../domain/url";
 import CreateURLUseCase from "./create-url-use-case";
 
@@ -101,6 +102,6 @@ describe("CreateURL", () => {
       token: "invalid-token",
     };
 
-    await expect(sut.execute(request)).rejects.toThrow();
+    await expect(sut.execute(request)).rejects.toThrow(UnauthorizedError);
   });
 });
