@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import cors from "cors";
 import { Server as HttpServer } from "http";
 
 import { URLsController } from "./infra/http/controllers/urls-controller";
@@ -29,6 +30,11 @@ export default class Server extends HttpServer {
   }
 
   async init(): Promise<void> {
+    this.app.use(
+      cors({
+        origin: "*",
+      }),
+    );
     this.app.use(express.json());
     await this.database.$connect();
 
