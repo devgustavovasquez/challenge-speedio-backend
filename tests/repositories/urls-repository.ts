@@ -21,4 +21,8 @@ export class InMemoryURLsRepository implements URLsRepository {
 
     this.urls.splice(index, 1);
   }
+
+  async findById(id: string): Promise<URL | undefined> {
+    return this.urls.find((url) => url.id === id);
+  }
 }

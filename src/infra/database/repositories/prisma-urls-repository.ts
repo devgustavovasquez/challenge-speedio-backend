@@ -33,4 +33,12 @@ export default class PrismaUrlsRepository implements URLsRepository {
 
     return URLsMapper.toDomain(url);
   }
+
+  async findById(id: string): Promise<URL | undefined> {
+    const url = await this.prisma.uRL.findUnique({ where: { id } });
+
+    if (!url) return undefined;
+
+    return URLsMapper.toDomain(url);
+  }
 }

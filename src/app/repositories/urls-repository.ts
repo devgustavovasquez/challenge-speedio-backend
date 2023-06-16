@@ -5,4 +5,5 @@ export default interface URLsRepository {
   delete(url: URL): Promise<void>;
   getLastURL(): Promise<URL | undefined>;
   findByShort(short: string): Promise<URL | undefined>;
+  findById(id: string): Promise<URL | undefined>;
 }

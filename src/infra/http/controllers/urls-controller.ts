@@ -15,6 +15,7 @@ import { validateMiddleware } from "../middlewares/validate-middleware";
 import { z } from "zod";
 import ListRankedURLHistoryUseCase from "../../../app/use-cases/list-ranked-url-history-use-case";
 import { URLHistoryViewModel } from "../view-models/urls-history-view-model";
+import DeleteURLUseCase from "../../../app/use-cases/delete-url-use-case";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -76,6 +77,37 @@ export class URLsController {
           return response
             .status(200)
             .send(urls.map((url) => URLHistoryViewModel.toHTTP(url)));
+        } catch (error) {
+          next(error);
+        }
+      },
+    );
+
+    this.application.delete(
+      "/urls/:id",
+      async (request: Request, response: Response, next: NextFunction) => {
+        try {
+          const schema = z.object({
+            params: z.object({
+              id: z.string().uuid(),
+            }),
+            body: z.object({
+              userId: z.string().uuid(),
+              token: z.string(),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
+
+          const useCase = new DeleteURLUseCase(
+            this.urlsRepositoy,
+            this.usersRepository,
+            this.auth,
+          );
+
+          await useCase.execute(data);
+
+          return response.status(204).send();
         } catch (error) {
           next(error);
         }
