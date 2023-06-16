@@ -1,7 +1,9 @@
+import defaultConfig from "./jest.config";
 import { Config } from "jest";
 
 const config: Config = {
   rootDir: ".",
+  testMatch: ["<rootDir>/src/**/*spec.ts", "!<rootDir>/dist/**/*"],
   collectCoverageFrom: [
     "<rootDir>/src/**/*.ts",
     "<rootDir>/utils/**/*.ts",
@@ -10,7 +12,6 @@ const config: Config = {
     "!<rootDir>/src/infra/http/**",
     "!<rootDir>/src/index.ts",
   ],
-  coveragePathIgnorePatterns: ["<rootDir>/dist/"],
   coverageDirectory: "coverage",
   transform: {
     ".+\\.ts$": "ts-jest",

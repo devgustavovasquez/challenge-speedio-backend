@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsup",
     "dev": "tsx watch src/index.ts",
     "test": "jest --passWithNoTests --runInBand --no-cache",
     "test:unit": "pnpm test -- --verbose --watch -c jest-unit.config.ts",
@@ -43,6 +45,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
+    "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4"
   },
