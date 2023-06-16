@@ -3,6 +3,7 @@ import URLHistory from "../domain/url-history";
 import URLsRepository from "../repositories/urls-repository";
 import URLsHistoryRepository from "../repositories/urls-history-repository";
 import { NotFoundError } from "../../infra/http/errors/not-found";
+import Scraper from "../../infra/modules/scraper";
 
 type RedirectURLRequest = {
   short: string;
@@ -16,6 +17,7 @@ export default class RedirectURLUseCase {
   constructor(
     private URLsRepository: URLsRepository,
     private urlsHistoryRepository: URLsHistoryRepository,
+    private scraper: Scraper,
   ) {}
 
   async execute(request: RedirectURLRequest): Promise<RedirectURLResponse> {
@@ -33,7 +35,7 @@ export default class RedirectURLUseCase {
 
     if (!urlHistory) {
       urlHistory = new URLHistory({
-        title: "mock-title", // TODO: scrape title from url
+        title: await this.scraper.getTitlePage(urlRoot),
         url: urlRoot,
         count: 0,
         lastAccessedAt: new Date(),

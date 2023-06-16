@@ -1,4 +1,5 @@
 import { makeURL } from "../../../tests/factories/url-factory";
+import MockScraper from "../../../tests/modules/scraper";
 import { InMemoryURLsHistoryRepository } from "../../../tests/repositories/urls-history-repository";
 import { InMemoryURLsRepository } from "../../../tests/repositories/urls-repository";
 import { NotFoundError } from "../../infra/http/errors/not-found";
@@ -8,9 +9,14 @@ describe("RedirectURL", () => {
   let sut: RedirectURLUseCase;
   const URLRepository = new InMemoryURLsRepository();
   const URLHistoriesRepository = new InMemoryURLsHistoryRepository();
+  const scraper = new MockScraper();
 
   beforeEach(() => {
-    sut = new RedirectURLUseCase(URLRepository, URLHistoriesRepository);
+    sut = new RedirectURLUseCase(
+      URLRepository,
+      URLHistoriesRepository,
+      scraper,
+    );
     URLHistoriesRepository.urls = [];
     URLRepository.urls = [];
   });
