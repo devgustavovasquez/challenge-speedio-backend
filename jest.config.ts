@@ -8,7 +8,7 @@ const config: Config = {
     "!<rootDir>/**/**spec.ts",
     "!<rootDir>/src/infra/database/**",
     "!<rootDir>/src/infra/http/**",
-    "!<rootDir>/src/server.ts",
+    "!<rootDir>/src/index.ts",
   ],
   coveragePathIgnorePatterns: ["<rootDir>/dist/"],
   coverageDirectory: "coverage",
