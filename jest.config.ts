@@ -1,4 +1,3 @@
-import defaultConfig from "./jest.config";
 import { Config } from "jest";
 
 const config: Config = {
