@@ -1,6 +1,7 @@
 import { AnyZodObject, ZodError, z } from "zod";
 import { Request } from "express";
 import { BadRequestError } from "../errors/bad-request";
+import { InternalServerError } from "../errors/internal-server";
 
 export async function validateMiddleware<T extends AnyZodObject>(
   schema: T,
@@ -49,6 +50,6 @@ export async function validateMiddleware<T extends AnyZodObject>(
       });
     }
 
-    throw new Error(JSON.stringify(error));
+    throw new InternalServerError("Internal Server Error");
   }
 }
