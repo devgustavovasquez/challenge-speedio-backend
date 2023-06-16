@@ -16,6 +16,7 @@ import { z } from "zod";
 import ListRankedURLHistoryUseCase from "../../../app/use-cases/list-ranked-url-history-use-case";
 import { URLHistoryViewModel } from "../view-models/urls-history-view-model";
 import DeleteURLUseCase from "../../../app/use-cases/delete-url-use-case";
+import Scraper from "../../modules/scraper";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -26,6 +27,7 @@ export class URLsController {
     private readonly application: Application,
     private readonly auth: Auth,
     private readonly database: PrismaClient,
+    private readonly scraper: Scraper,
   ) {
     this.registerRoutes();
     this.urlsRepositoy = new PrismaUrlsRepository(database);
@@ -129,6 +131,7 @@ export class URLsController {
           const useCase = new RedirectURLUseCase(
             this.urlsRepositoy,
             this.urlsHistoryRepository,
+            this.scraper,
           );
 
           const { redirectURL } = await useCase.execute(data);
