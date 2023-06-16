@@ -1,7 +1,10 @@
-import URLHistory from "../domain/url-history";
+import URLHistory, { URLHistoryProps } from "../domain/url-history";
 
 type ListOptions = {
   limit?: number;
+  offset?: number;
+  orderBy?: keyof URLHistoryProps;
+  order?: "asc" | "desc";
 };
 
 export default interface URLsHistoryRepository {

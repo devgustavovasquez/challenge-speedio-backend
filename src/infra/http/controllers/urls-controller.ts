@@ -13,6 +13,8 @@ import PrismaURLsHistoryRepository from "../../database/repositories/prisma-urls
 import { URLViewModel } from "../view-models/urls-view-model";
 import { validateMiddleware } from "../middlewares/validate-middleware";
 import { z } from "zod";
+import ListRankedURLHistoryUseCase from "../../../app/use-cases/list-ranked-url-history-use-case";
+import { URLHistoryViewModel } from "../view-models/urls-history-view-model";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -55,6 +57,25 @@ export class URLsController {
           const { url } = await useCase.execute(data);
 
           return response.status(201).send(URLViewModel.toHTTP(url));
+        } catch (error) {
+          next(error);
+        }
+      },
+    );
+
+    this.application.get(
+      "/urls",
+      async (request: Request, response: Response, next: NextFunction) => {
+        try {
+          const useCase = new ListRankedURLHistoryUseCase(
+            this.urlsHistoryRepository,
+          );
+
+          const { urls } = await useCase.execute();
+
+          return response
+            .status(200)
+            .send(urls.map((url) => URLHistoryViewModel.toHTTP(url)));
         } catch (error) {
           next(error);
         }

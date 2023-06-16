@@ -1,8 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import URLsHistoryRepository from "../../../app/repositories/urls-history-repository";
 import URLsHistoryMapper from "../mappers/urls-history-mappers";
-import URLHistory from "../../../app/domain/url-history";
+import URLHistory, { URLHistoryProps } from "../../../app/domain/url-history";
 
+type ListOptions = {
+  limit?: number;
+  offset?: number;
+  orderBy?: keyof URLHistoryProps;
+  order?: "asc" | "desc";
+};
 export default class PrismaURLsHistoryRepository
   implements URLsHistoryRepository
 {
@@ -33,12 +39,17 @@ export default class PrismaURLsHistoryRepository
     return URLsHistoryMapper.toDomain(urlHistory);
   }
 
-  async list(options: { limit?: number | undefined }): Promise<URLHistory[]> {
+  async list(options: ListOptions): Promise<URLHistory[]> {
+    const { limit, offset, orderBy = "count", order = "desc" } = options;
+
     const urlsHistory = await this.prisma.uRLHistory.findMany({
-      orderBy: { count: "desc" },
-      take: options.limit || 10,
+      take: limit,
+      skip: offset,
+      orderBy: { [orderBy]: order },
     });
 
-    return urlsHistory.map(URLsHistoryMapper.toDomain);
+    return urlsHistory.map((urlHistory) =>
+      URLsHistoryMapper.toDomain(urlHistory),
+    );
   }
 }
