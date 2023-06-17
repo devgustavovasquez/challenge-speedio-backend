@@ -41,4 +41,10 @@ export default class PrismaUrlsRepository implements URLsRepository {
 
     return URLsMapper.toDomain(url);
   }
+
+  async listByUser(userId: string): Promise<URL[]> {
+    const urls = await this.prisma.uRL.findMany({ where: { userId } });
+
+    return urls.map(URLsMapper.toDomain);
+  }
 }

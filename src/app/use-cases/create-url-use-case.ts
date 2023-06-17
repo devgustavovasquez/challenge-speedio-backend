@@ -35,6 +35,12 @@ export default class CreateURLUseCase {
       }
 
       userId = this.auth.decodeToken<{ id: string }>(token).id;
+
+      const user = await this.usersRepository.findById(userId);
+
+      if (!user) {
+        throw new UnauthorizedError("Invalid token");
+      }
     }
 
     let short = "";

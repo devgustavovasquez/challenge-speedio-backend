@@ -25,4 +25,8 @@ export class InMemoryURLsRepository implements URLsRepository {
   async findById(id: string): Promise<URL | undefined> {
     return this.urls.find((url) => url.id === id);
   }
+
+  async listByUser(userId: string): Promise<URL[]> {
+    return this.urls.filter((url) => url.userId === userId);
+  }
 }

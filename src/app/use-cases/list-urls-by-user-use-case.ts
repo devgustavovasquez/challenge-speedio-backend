@@ -1,42 +1,47 @@
-import { NotFoundError } from "../../infra/http/errors/not-found";
 import { UnauthorizedError } from "../../infra/http/errors/unauthorized";
 import Auth from "../../infra/modules/auth";
+import URL from "../domain/url";
 import URLsRepository from "../repositories/urls-repository";
 import UsersRepository from "../repositories/users-repository";
 
-type DeleteURLRequest = {
-  id: string;
+type ListURLsByUserRequest = {
   token: string;
 };
 
-export default class DeleteURLUseCase {
+type ListURLsByUserResponse = {
+  urls: URL[];
+};
+
+export default class ListURLsByUserUseCase {
   constructor(
     private URLsRepository: URLsRepository,
     private usersRepository: UsersRepository,
     private auth: Auth,
   ) {}
 
-  async execute(request: DeleteURLRequest): Promise<void> {
-    const { id: urlId, token } = request;
+  async execute(
+    request: ListURLsByUserRequest,
+  ): Promise<ListURLsByUserResponse> {
+    const { token } = request;
 
-    const isTokenValid = this.auth.verifyToken(token);
+    const isValid = this.auth.verifyToken(token);
 
-    if (!isTokenValid) {
+    if (!isValid) {
       throw new UnauthorizedError("Invalid token");
-    }
-
-    const url = await this.URLsRepository.findById(urlId);
-
-    if (!url) {
-      throw new NotFoundError("URL not found");
     }
 
     const userId = this.auth.decodeToken<{ id: string }>(token).id;
 
-    if (url.userId !== userId) {
+    const user = await this.usersRepository.findById(userId);
+
+    if (!user) {
       throw new UnauthorizedError("Invalid token");
     }
 
-    await this.URLsRepository.delete(url);
+    const urls = await this.URLsRepository.listByUser(userId);
+
+    return {
+      urls,
+    };
   }
 }

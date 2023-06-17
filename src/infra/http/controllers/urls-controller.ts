@@ -17,6 +17,7 @@ import ListRankedURLHistoryUseCase from "../../../app/use-cases/list-ranked-url-
 import { URLHistoryViewModel } from "../view-models/urls-history-view-model";
 import DeleteURLUseCase from "../../../app/use-cases/delete-url-use-case";
 import Scraper from "../../modules/scraper";
+import ListURLsByUserUseCase from "../../../app/use-cases/list-urls-by-user-use-case";
 
 export class URLsController {
   private readonly urlsRepositoy: URLsRepository;
@@ -44,7 +45,6 @@ export class URLsController {
             body: z.object({
               title: z.string().min(3).max(255),
               origin: z.string().url(),
-              userId: z.string().uuid().optional(),
               token: z.string().optional(),
             }),
           });
@@ -93,8 +93,7 @@ export class URLsController {
             params: z.object({
               id: z.string().uuid(),
             }),
-            body: z.object({
-              userId: z.string().uuid(),
+            query: z.object({
               token: z.string(),
             }),
           });
@@ -117,7 +116,7 @@ export class URLsController {
     );
 
     this.application.get(
-      "/:short",
+      "/urls/:short",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
           const schema = z.object({
@@ -137,6 +136,35 @@ export class URLsController {
           const { redirectURL } = await useCase.execute(data);
 
           return response.status(200).send({ redirectURL });
+        } catch (error) {
+          next(error);
+        }
+      },
+    );
+
+    this.application.get(
+      "/urls/me",
+      async (request: Request, response: Response, next: NextFunction) => {
+        try {
+          const schema = z.object({
+            query: z.object({
+              token: z.string(),
+            }),
+          });
+
+          const data = await validateMiddleware(schema, request);
+
+          const useCase = new ListURLsByUserUseCase(
+            this.urlsRepositoy,
+            this.usersRepository,
+            this.auth,
+          );
+
+          const { urls } = await useCase.execute(data);
+
+          return response
+            .status(200)
+            .send(urls.map((url) => URLViewModel.toHTTP(url)));
         } catch (error) {
           next(error);
         }

@@ -6,4 +6,5 @@ export default interface URLsRepository {
   getLastURL(): Promise<URL | undefined>;
   findByShort(short: string): Promise<URL | undefined>;
   findById(id: string): Promise<URL | undefined>;
+  listByUser(userId: string): Promise<URL[]>;
 }
