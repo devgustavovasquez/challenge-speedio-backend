@@ -143,7 +143,7 @@ export class URLsController {
     );
 
     this.application.get(
-      "/urls/me",
+      "/me",
       async (request: Request, response: Response, next: NextFunction) => {
         try {
           const schema = z.object({
