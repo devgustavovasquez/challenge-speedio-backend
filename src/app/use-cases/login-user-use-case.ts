@@ -38,7 +38,7 @@ export default class LoginUserUseCase {
 
     const token = this.auth.generateToken(
       {
-        userId: user.id,
+        id: user.id,
       },
       {
         expiresIn: "1d",

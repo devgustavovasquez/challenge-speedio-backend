@@ -52,45 +52,6 @@ describe("CreateURL", () => {
     expect(url.short).toBe("1b");
   });
 
-  it("should create a URL with userId", async () => {
-    const user = makeUser();
-    usersRepository.users.push(user);
-
-    const { url } = await sut.execute({
-      title: "Example URL",
-      origin: "https://example.com",
-      userId: user.id,
-      token: "validToken",
-    });
-
-    expect(url.userId).toBe(user.id);
-    expect(url).toBeInstanceOf(URL);
-  });
-
-  it("should throw if user is not found", async () => {
-    const request = {
-      title: "Example URL",
-      origin: "https://example.com",
-      userId: "invalid-user-id",
-      token: "invalid-token",
-    };
-
-    await expect(sut.execute(request)).rejects.toThrow(BadRequestError);
-  });
-
-  it("should throw if token is not found, when userId is provided", async () => {
-    const user = makeUser();
-    usersRepository.users.push(user);
-
-    const request = {
-      title: "Example URL",
-      origin: "https://example.com",
-      userId: user.id,
-    };
-
-    await expect(sut.execute(request)).rejects.toThrow(BadRequestError);
-  });
-
   it("should throw if user is not authenticated", async () => {
     const user = makeUser();
     usersRepository.users.push(user);

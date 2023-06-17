@@ -12,4 +12,10 @@ export default class MockAuth implements Auth {
       return false;
     }
   }
+
+  decodeToken<T>(_token: string): T {
+    return {
+      id: "mockedId",
+    } as T;
+  }
 }

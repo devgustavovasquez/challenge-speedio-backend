@@ -6,6 +6,7 @@ const SECRET = process.env.JWT_SECRET as string;
 export default interface Auth {
   generateToken(payload: unknown, options?: SignOptions): string;
   verifyToken(token: string): boolean;
+  decodeToken<T>(token: string): T;
 }
 
 export class Jwt implements Auth {
@@ -21,5 +22,9 @@ export class Jwt implements Auth {
     } catch (error) {
       return false;
     }
+  }
+
+  decodeToken<T>(token: string): T {
+    return verify(token, SECRET, { ignoreExpiration: false }) as T;
   }
 }

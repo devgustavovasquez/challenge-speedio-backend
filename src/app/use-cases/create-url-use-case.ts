@@ -1,5 +1,4 @@
 import { incrementShort } from "../../../utils";
-import { BadRequestError } from "../../infra/http/errors/bad-request";
 import { UnauthorizedError } from "../../infra/http/errors/unauthorized";
 import Auth from "../../infra/modules/auth";
 import URL from "../domain/url";
@@ -9,7 +8,6 @@ import UsersRepository from "../repositories/users-repository";
 type CreateURLRequest = {
   title: string;
   origin: string;
-  userId?: string;
   token?: string;
 };
 
@@ -25,24 +23,18 @@ export default class CreateURLUseCase {
   ) {}
 
   async execute(request: CreateURLRequest): Promise<CreateURLResponse> {
-    const { title, origin, userId, token } = request;
+    const { title, origin, token } = request;
 
-    if (userId) {
-      if (!token) {
-        throw new BadRequestError("Token not found");
-      }
+    let userId = "";
 
-      const user = await this.usersRepository.findById(userId);
+    if (token) {
+      const isValid = this.auth.verifyToken(token);
 
-      if (!user) {
-        throw new BadRequestError("User not found");
-      }
-
-      const isValidToken = this.auth.verifyToken(token);
-
-      if (!isValidToken) {
+      if (!isValid) {
         throw new UnauthorizedError("Invalid token");
       }
+
+      userId = this.auth.decodeToken<{ id: string }>(token).id;
     }
 
     let short = "";
